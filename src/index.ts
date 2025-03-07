@@ -83,4 +83,4 @@ const templates = fs
     value: dirent.name,
   }));
 
-console.log(123);
+console.log(templates);

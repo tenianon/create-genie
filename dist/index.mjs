@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import { language } from './i18n/index.mjs';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -35,4 +36,8 @@ path.join(
   path.dirname(new URL(import.meta.url).pathname).replace(/^\//, ""),
   "../template"
 );
-console.log(123);
+const templates = fs.readdirSync("/src/template", { withFileTypes: true }).filter((dirent) => dirent.isDirectory()).map((dirent) => ({
+  title: dirent.name,
+  value: dirent.name
+}));
+console.log(templates);
