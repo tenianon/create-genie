@@ -50,7 +50,7 @@ const questions: PromptObject[] = [
 
 const templateDir = path.join(
   path.dirname(new URL(import.meta.url).pathname).replace(/^\//, ''),
-  'template',
+  '../src/template',
 );
 
 // const templates = (() => {

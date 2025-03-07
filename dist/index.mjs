@@ -34,7 +34,7 @@ const isRootDir = currentDir === path.parse(currentDir).root;
 ];
 const templateDir = path.join(
   path.dirname(new URL(import.meta.url).pathname).replace(/^\//, ""),
-  "template"
+  "../src/template"
 );
 const templates = fs.readdirSync(templateDir, { withFileTypes: true }).filter((dirent) => dirent.isDirectory()).map((dirent) => ({
   title: dirent.name,
