@@ -36,9 +36,10 @@ const templateDir = path.join(
   path.dirname(new URL(import.meta.url).pathname).replace(/^\//, ""),
   "template"
 );
+
+console.log(templateDir);
 const templates = fs.readdirSync(templateDir, { withFileTypes: true }).filter((dirent) => dirent.isDirectory()).map((dirent) => ({
   title: dirent.name,
   value: dirent.name
 }));
-console.log(templateDir);
 console.log(templates);
