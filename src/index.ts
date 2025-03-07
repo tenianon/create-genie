@@ -6,31 +6,7 @@ import { language } from './i18n/index.ts';
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 
 const currentDir = path.resolve('.');
-
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-
 const isRootDir = currentDir === path.parse(currentDir).root;
-
-function getFirstLevelFolders(dir: string) {
-  try {
-    // 检查目录是否存在
-    if (!fs.existsSync(dir)) {
-      throw new Error(`Directory does not exist: ${dir}`);
-    }
-
-    // 读取目录并过滤出文件夹
-    const folders = fs.readdirSync(dir)
-      .filter(item => {
-        const fullPath = path.join(dir, item);
-        return fs.statSync(fullPath).isDirectory();
-      });
-
-    return folders
-  } catch (error) {
-    console.error('Error reading directory:', error);
-  }
-}
-
 
 const questions: PromptObject[] = [
   {
@@ -70,11 +46,41 @@ const questions: PromptObject[] = [
 
 // (async () => {
 //   const response = await prompts(questions);
-
-
-//   console.log(response);
-
 // })();
 
+const templateDir = path.join(
+  path.dirname(new URL(import.meta.url).pathname).replace(/^\//, ''),
+  '../template',
+);
 
-console.log(`${__dirname}/template`)
+// const templates = (() => {
+//   try {
+//     return fs
+//       .readdirSync('/src/template', { withFileTypes: true })
+//       .filter((dirent) => dirent.isDirectory())
+//       .map((dirent) => ({
+//         title: dirent.name,
+//         value: dirent.name,
+//       }));
+//   } catch (error) {
+//     // 如果找不到模板目录，尝试开发环境路径
+//     const devTemplateDir = path.join(process.cwd(), 'src/template');
+//     return fs
+//       .readdirSync(devTemplateDir, { withFileTypes: true })
+//       .filter((dirent) => dirent.isDirectory())
+//       .map((dirent) => ({
+//         title: dirent.name,
+//         value: dirent.name,
+//       }));
+//   }
+// })();
+
+const templates = fs
+  .readdirSync('/src/template', { withFileTypes: true })
+  .filter((dirent) => dirent.isDirectory())
+  .map((dirent) => ({
+    title: dirent.name,
+    value: dirent.name,
+  }));
+
+console.log(123);

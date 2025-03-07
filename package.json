@@ -1,6 +1,6 @@
 {
   "name": "create-genie",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -43,5 +43,9 @@
   },
   "unbuild": {
     "failOnWarn": false
-  }
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
 }

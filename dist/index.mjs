@@ -1,10 +1,8 @@
 import path from 'path';
-import 'fs';
 import { language } from './i18n/index.mjs';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const currentDir = path.resolve(".");
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const isRootDir = currentDir === path.parse(currentDir).root;
 [
   {
@@ -33,4 +31,8 @@ const isRootDir = currentDir === path.parse(currentDir).root;
     initial: 0
   }
 ];
-console.log(`${__dirname}/template`);
+path.join(
+  path.dirname(new URL(import.meta.url).pathname).replace(/^\//, ""),
+  "../template"
+);
+console.log(123);
