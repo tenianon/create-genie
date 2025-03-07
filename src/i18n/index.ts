@@ -1,21 +1,27 @@
-interface Language {
+interface Languages {
   [key: string]: {
     [key: string]: string;
   };
 }
 
-export const language: Language = {
+export const languages: Languages = {
   'en-US': {
-    qProjectName: 'Please enter project name',
-    eProjectName1: 'Invalid directory path',
-    eProjectName2:
+    'projectName.tip.input': 'Please enter project name',
+    'projectName.cancel.input': 'Cancel input',
+    'projectName.error.path': 'Invalid directory path',
+    'projectName.error.name':
       'Only valid project names with letters, numbers, dashes, or underscores are supported',
-    qProjectTemplate: 'Please choose template',
+
+    'projectTemplate.tip.select': 'Please choose template',
+    'projectName.cancel.select': 'Cancel choose',
   },
   'zh-CN': {
-    qProjectName: '请输入项目名称',
-    eProjectName1: '无效的目录路径',
-    eProjectName2: '只支持字母、数字、破折号或下划线输入有效的项目名称',
-    qProjectTemplate: '请选择模板',
+    'projectName.tip.input': '请输入项目名称',
+    'projectName.cancel.input': '取消输入',
+    'projectName.error.path': '无效的目录路径',
+    'projectName.error.name':
+      '只支持字母、数字、破折号或下划线输入有效的项目名称',
+    'projectTemplate.tip.select': '请选择模板',
+    'projectName.cancel.select': '取消选择',
   },
 };

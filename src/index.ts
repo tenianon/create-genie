@@ -1,83 +1,105 @@
 import path from 'path';
-import prompts, { type PromptObject } from 'prompts';
-import fs from 'fs';
-import { language } from './i18n/index.ts';
+import {
+  text,
+  intro,
+  outro,
+  isCancel,
+  cancel,
+  confirm,
+  select,
+  spinner,
+} from '@clack/prompts';
+
 import { fileURLToPath } from 'url';
+import fs from 'fs';
+import { languages } from './i18n/index.ts';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 
 const currentDir = path.resolve('.');
 const isRootDir = currentDir === path.parse(currentDir).root;
-const __dirname = path.dirname(fileURLToPath(import.meta.url)); // 统一转换 __dirname
 
-const templateDir = path.resolve(__dirname, '../src/template'); // 用 path.resolve 更语义化
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const templateDir = path.resolve(__dirname, '../src/template');
 
 const templates = fs
   .readdirSync(templateDir, { withFileTypes: true })
   .filter((dirent) => dirent.isDirectory())
-  .map((dirent) => dirent.name); // 直接获取文件夹名称
+  .map((dirent) => ({
+    title: dirent.name,
+    value: dirent.name,
+  }));
 
-const questions: PromptObject[] = [
-  {
-    type: 'text',
-    name: 'projectName',
-    message: language[locale]
-      ? language[locale].qProjectName
-      : language['en-US'].qProjectName,
-    validate: async (value: string) => {
-      if (value === '.') {
-        if (!isRootDir) {
-          return true;
-        } else {
-          return language[locale]
-            ? language[locale].eProjectName1
-            : language['en-US'].eProjectName1;
-        }
-      } else if (value.match(/^[a-zA-Z0-9-_]+$/)) {
-        return true;
-      } else {
-        return language[locale]
-          ? language[locale].eProjectName2
-          : language['en-US'].eProjectName2;
+// const questions: PromptObject[] = [
+//   {
+//     type: 'text',
+//     name: 'projectName',
+//     message: language[locale]
+//       ? language[locale].qProjectName
+//       : language['en-US'].qProjectName,
+//     validate: async (value: string) => {
+//       if (value === '.') {
+//         if (!isRootDir) {
+//           return true;
+//         } else {
+//           return language[locale]
+//             ? language[locale].eProjectName1
+//             : language['en-US'].eProjectName1;
+//         }
+//       } else if (value.match(/^[a-zA-Z0-9-_]+$/)) {
+//         return true;
+//       } else {
+//         return language[locale]
+//           ? language[locale].eProjectName2
+//           : language['en-US'].eProjectName2;
+//       }
+//     },
+//   },
+//   {
+//     type: 'select',
+//     name: 'value',
+//     message: language[locale]
+//       ? language[locale].qProjectTemplate
+//       : language['en-US'].qProjectTemplate,
+//     choices: templates,
+//     initial: 0,
+//   },
+// ];
+
+function getMessage(key: keyof (typeof languages)['en-US']) {
+  return languages[locale] ? languages[locale][key] : languages['en-US'][key];
+}
+
+(async () => {
+  const _projectName = await text({
+    message: getMessage('projectName.tip.input'),
+    initialValue: 'project-test',
+    validate: (value: string) => {
+      if (value === '.' && isRootDir) {
+        return getMessage('projectName.error.path');
+      } else if (value !== '.' && !value.match(/^[a-zA-Z0-9-_]+$/)) {
+        return getMessage('projectName.error.name');
       }
     },
-  },
-  {
-    type: 'select',
-    name: 'value',
-    message: language[locale]
-      ? language[locale].qProjectTemplate
-      : language['en-US'].qProjectTemplate,
-    choices: [],
-    initial: 0,
-  },
-];
+  });
 
-// (async () => {
-//   const response = await prompts(questions);
-// })();
+  if (isCancel(_projectName)) {
+    cancel(getMessage('projectName.cancel.input'));
+    process.exit(0);
+  }
 
-// const templates = (() => {
-//   try {
-//     return fs
-//       .readdirSync('/src/template', { withFileTypes: true })
-//       .filter((dirent) => dirent.isDirectory())
-//       .map((dirent) => ({
-//         title: dirent.name,
-//         value: dirent.name,
-//       }));
-//   } catch (error) {
-//     // 如果找不到模板目录，尝试开发环境路径
-//     const devTemplateDir = path.join(process.cwd(), 'src/template');
-//     return fs
-//       .readdirSync(devTemplateDir, { withFileTypes: true })
-//       .filter((dirent) => dirent.isDirectory())
-//       .map((dirent) => ({
-//         title: dirent.name,
-//         value: dirent.name,
-//       }));
-//   }
-// })();
+  const template = await select({
+    message: getMessage('projectTemplate.tip.select'),
+    options: templates,
+  });
 
-console.log(templateDir);
-console.log(templates);
+  if (isCancel(_projectName)) {
+    cancel(getMessage('projectName.cancel.input'));
+    process.exit(0);
+  }
+
+  const projectName = _projectName === '.' ? path.basename(currentDir) : _projectName
+
+  console.log(projectName, template);
+})();
