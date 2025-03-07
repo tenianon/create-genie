@@ -11,7 +11,7 @@ import {
 } from '@clack/prompts';
 
 import { fileURLToPath } from 'url';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { languages } from './i18n/index.ts';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -30,42 +30,6 @@ const templates = fs
     title: dirent.name,
     value: dirent.name,
   }));
-
-// const questions: PromptObject[] = [
-//   {
-//     type: 'text',
-//     name: 'projectName',
-//     message: language[locale]
-//       ? language[locale].qProjectName
-//       : language['en-US'].qProjectName,
-//     validate: async (value: string) => {
-//       if (value === '.') {
-//         if (!isRootDir) {
-//           return true;
-//         } else {
-//           return language[locale]
-//             ? language[locale].eProjectName1
-//             : language['en-US'].eProjectName1;
-//         }
-//       } else if (value.match(/^[a-zA-Z0-9-_]+$/)) {
-//         return true;
-//       } else {
-//         return language[locale]
-//           ? language[locale].eProjectName2
-//           : language['en-US'].eProjectName2;
-//       }
-//     },
-//   },
-//   {
-//     type: 'select',
-//     name: 'value',
-//     message: language[locale]
-//       ? language[locale].qProjectTemplate
-//       : language['en-US'].qProjectTemplate,
-//     choices: templates,
-//     initial: 0,
-//   },
-// ];
 
 function getMessage(key: keyof (typeof languages)['en-US']) {
   return languages[locale] ? languages[locale][key] : languages['en-US'][key];
@@ -99,7 +63,13 @@ function getMessage(key: keyof (typeof languages)['en-US']) {
     process.exit(0);
   }
 
-  const projectName = _projectName === '.' ? path.basename(currentDir) : _projectName
-
+  const projectName =
+    _projectName === '.' ? path.basename(currentDir) : _projectName;
+    
   console.log(projectName, template);
+
+  const s = spinner();
+  s.start('开始拷贝');
+  await fs.copy(`${templateDir}/template`, projectName);
+  s.stop('拷贝完成');
 })();
