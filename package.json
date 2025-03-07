@@ -16,9 +16,14 @@
   "author": "Nian",
   "license": "ISC",
   "description": "",
-  "homepage": "",
-  "repository": {},
-  "bugs": {},
+  "homepage": "https://github.com/tenianon/create-genie",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/tenianon/create-genie"
+  },
+  "bugs": {
+    "url": "https://github.com/tenianon/create-genie/issues"
+  },
   "keywords": [
     "create",
     "template",
@@ -26,6 +31,7 @@
   ],
   "devDependencies": {
     "@eslint/js": "^9.21.0",
+    "@types/node": "^22.13.9",
     "@types/prompts": "^2.4.9",
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.0.2",

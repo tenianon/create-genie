@@ -11,6 +11,9 @@ importers:
       '@eslint/js':
         specifier: ^9.21.0
         version: 9.21.0
+      '@types/node':
+        specifier: ^22.13.9
+        version: 22.13.9
       '@types/prompts':
         specifier: ^2.4.9
         version: 2.4.9
