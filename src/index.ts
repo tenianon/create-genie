@@ -50,7 +50,7 @@ const questions: PromptObject[] = [
 
 const templateDir = path.join(
   path.dirname(new URL(import.meta.url).pathname).replace(/^\//, ''),
-  '../template',
+  'template',
 );
 
 // const templates = (() => {
@@ -76,11 +76,11 @@ const templateDir = path.join(
 // })();
 
 const templates = fs
-  .readdirSync('/src/template', { withFileTypes: true })
+  .readdirSync(templateDir, { withFileTypes: true })
   .filter((dirent) => dirent.isDirectory())
   .map((dirent) => ({
     title: dirent.name,
     value: dirent.name,
   }));
-
+console.log(templateDir);
 console.log(templates);
