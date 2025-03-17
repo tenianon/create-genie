@@ -4,13 +4,15 @@ import g, { stdin, stdout } from 'node:process';
 import * as f from 'node:readline';
 import f__default from 'node:readline';
 import { WriteStream } from 'node:tty';
-import { g as getDefaultExportFromCjs, f as fs, a as getLanguage } from './shared/create-genie.-3cqdDmv.mjs';
 import { fileURLToPath } from 'url';
+import { readdir, readFile, writeFile } from 'fs/promises';
+import { getLanguage } from './utils/getLanguage.mjs';
+import { copyDir, pathExists } from './utils/fsOperate.mjs';
 import 'fs';
-import 'constants';
-import 'stream';
-import 'util';
-import 'assert';
+
+function getDefaultExportFromCjs (x) {
+	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
+}
 
 var src;
 var hasRequiredSrc;
@@ -210,10 +212,12 @@ const currentDir = path.resolve(".");
 const isRootDir = currentDir === path.parse(currentDir).root;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const templateDir = path.resolve(__dirname, "../src/template");
-const templates = fs.readdirSync(templateDir, { withFileTypes: true }).filter((dirent) => dirent.isDirectory()).map((dirent) => ({
-  title: dirent.name,
-  value: dirent.name
-}));
+const templates = await readdir(templateDir, { withFileTypes: true }).then(
+  (dirent) => dirent.filter((dirent2) => dirent2.isDirectory()).map((dirent2) => ({
+    title: dirent2.name,
+    value: dirent2.name
+  }))
+);
 async function bootstrap() {
   const language = getLanguage();
   const _projectName = await he({
@@ -235,20 +239,21 @@ async function bootstrap() {
     message: language.projectTemplateSelect,
     options: templates
   });
-  if (BD(_projectName)) {
-    xe(language.projectNameCancelInput);
+  if (BD(template)) {
+    xe(language.projectNameCancelSelect);
     process.exit(0);
   }
   const projectName = _projectName === "." ? path.basename(currentDir) : _projectName;
   const s = Y();
   s.start(language.templateCopyStart);
   try {
-    await fs.copy(`${templateDir}/${template.toString()}`, projectName);
+    await copyDir(path.join(templateDir, template.toString()), projectName);
     const packageJsonPath = path.join(projectName, "package.json");
-    if (await fs.pathExists(packageJsonPath)) {
-      const packageJson = await fs.readJson(packageJsonPath);
+    if (await pathExists(packageJsonPath)) {
+      const packageJsonRaw = await readFile(packageJsonPath, "utf-8");
+      const packageJson = JSON.parse(packageJsonRaw);
       packageJson.name = projectName;
-      await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+      await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));
     }
     s.stop(language.templateCopyCompleted);
   } catch (e) {

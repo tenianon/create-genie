@@ -3,8 +3,8 @@
   "projectNameCancelInput": "Cancel input",
   "projectNameErrorPath": "Invalid directory path",
   "projectNameErrorName": "Only valid project names with letters, numbers, dashes, or underscores are supported",
-  "projectTemplateSelect": "Please choose template",
-  "projectNameCancelSelect": "Cancel choose",
+  "projectTemplateSelect": "Please select template",
+  "projectNameCancelSelect": "Cancel select",
   "templateCopyStart": "Start coping",
   "templateCopyCompleted": "Copy completed",
   "templateCopyError": "Copy error"

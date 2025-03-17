@@ -1,3 +1,3 @@
 export default {
-  entries: ['./src/index', './src/utils/getLanguage'],
-}
+  entries: ['./src/index', './src/utils/getLanguage', './src/utils/fsOperate'],
+};
