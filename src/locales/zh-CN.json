@@ -1,0 +1,11 @@
+{
+  "projectNameInput": "请输入项目名称",
+  "projectNameCancelInput": "取消输入",
+  "projectNameErrorPath": "无效的目录路径",
+  "projectNameErrorName": "只支持字母、数字、破折号或下划线输入有效的项目名称",
+  "projectTemplateSelect": "请选择模板",
+  "projectNameCancelSelect": "取消选择",
+  "templateCopyStart": "开始拷贝",
+  "templateCopyCompleted": "拷贝完成",
+  "templateCopyError": "拷贝出错"
+}

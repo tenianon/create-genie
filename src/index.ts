@@ -12,11 +12,10 @@ import {
 
 import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
-import { languages } from './i18n/index.ts';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+import { getLanguage } from './utils/getLanguage.ts';
 
 const currentDir = path.resolve('.');
+
 const isRootDir = currentDir === path.parse(currentDir).root;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -31,45 +30,56 @@ const templates = fs
     value: dirent.name,
   }));
 
-function getMessage(key: keyof (typeof languages)['en-US']) {
-  return languages[locale] ? languages[locale][key] : languages['en-US'][key];
-}
+async function bootstrap() {
+  const language = getLanguage();
 
-(async () => {
   const _projectName = await text({
-    message: getMessage('projectName.tip.input'),
+    message: language.projectNameInput,
     initialValue: 'project-test',
     validate: (value: string) => {
       if (value === '.' && isRootDir) {
-        return getMessage('projectName.error.path');
+        return language.projectNameErrorPath;
       } else if (value !== '.' && !value.match(/^[a-zA-Z0-9-_]+$/)) {
-        return getMessage('projectName.error.name');
+        return language.projectNameErrorName;
       }
     },
   });
 
   if (isCancel(_projectName)) {
-    cancel(getMessage('projectName.cancel.input'));
+    cancel(language.projectNameCancelInput);
     process.exit(0);
   }
 
   const template = await select({
-    message: getMessage('projectTemplate.tip.select'),
+    message: language.projectTemplateSelect,
     options: templates,
   });
 
   if (isCancel(_projectName)) {
-    cancel(getMessage('projectName.cancel.input'));
+    cancel(language.projectNameCancelInput);
     process.exit(0);
   }
 
   const projectName =
     _projectName === '.' ? path.basename(currentDir) : _projectName;
-    
-  console.log(projectName, template);
 
   const s = spinner();
-  s.start('开始拷贝');
-  await fs.copy(`${templateDir}/template`, projectName);
-  s.stop('拷贝完成');
-})();
+  s.start(language.templateCopyStart);
+  try {
+    await fs.copy(`${templateDir}/${template.toString()}`, projectName);
+
+    const packageJsonPath = path.join(projectName, 'package.json');
+    if (await fs.pathExists(packageJsonPath)) {
+      const packageJson = await fs.readJson(packageJsonPath);
+      packageJson.name = projectName;
+      await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+    }
+
+    s.stop(language.templateCopyCompleted);
+  } catch (e) {
+    s.stop(language.templateCopyError);
+    process.exit(1);
+  }
+}
+
+bootstrap();
